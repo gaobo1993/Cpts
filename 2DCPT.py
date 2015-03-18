@@ -72,7 +72,7 @@ zRange = 1
 density = [0 for i in range( xRange*yRange*zRange )]
 
 def getDensity(pos):
-    if pos[0]+(xRange-1)/2 >= 0 and pos[1]+(yRange-1)/2) >= 0:
+    if pos[0]+(xRange-1)/2 >= 0 and pos[1]+(yRange-1)/2 >= 0:
         return density[int(((pos[0]+(xRange-1)/2)*yRange+(pos[1]+(yRange-1)/2))*zRange+pos[2])]
     else:
         return -1
@@ -101,7 +101,6 @@ def drawEnv( sourcePos = (-40, 0, 0), step = 5 ):
                 #    vs.sphere(pos = p, radius = 1, color = clr.red)
 
 
-drawEnv(sourcePos = (-40, 0, 0))
 
 def makeHoriVector(theta):
     return vs.vector(cos(theta), sin(theta), 0)
@@ -155,4 +154,5 @@ def loopVehicle( initPos = (40, 40, 0), theta = 3/2*pi, phi = 0, delta = 0.5, W 
 
         
 
+drawEnv(sourcePos = (-40, 0, 0))
 loopVehicle(theta = random.randint(1,4)/2*pi, initPos = (20, 20, 0))

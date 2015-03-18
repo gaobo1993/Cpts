@@ -133,10 +133,7 @@ def loopVehicle( initPos = (40, 40, 0), theta = 3/2*pi, phi = 0, delta = 0.5, al
     vscale = 8
     varr = vs.arrow(pos=vehicle.pos, axis=vscale*vehicle.velocity, color=clr.yellow)
 
-    lSensorRec, rSensorRec, hSensorRec, lowSensorRec = np.zeros(1, maxIter), np.zeros(1, maxIter), np.zeros(1, maxIter), np.zeros(1, maxIter)
     
-
-
     while True:
         vs.rate(1000)
 
