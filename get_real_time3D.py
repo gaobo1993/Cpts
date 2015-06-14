@@ -19,17 +19,24 @@ xRange = 121
 yRange = 121
 zRange = 61
 
+
 density = [0 for i in range( xRange*yRange*zRange )]
 
-def getDensity(pos):
+def getDensityA(pos):
     if (xRange-1)/2>= pos[0] >= -(xRange-1)/2 and (yRange-1)/2 >= pos[1] >= -(yRange-1)/2 and zRange-1 >= pos[2] >= 0:
         return density[int(((pos[0]+(xRange-1)/2)*yRange+(pos[1]+(yRange-1)/2))*zRange+pos[2])]
     else:
         return -1
 
+def getDensity(pos, sourcePos = (-20, 0, 20)):
+    if (xRange-1)/2>= pos[0] >= -(xRange-1)/2 and (yRange-1)/2 >= pos[1] >= -(yRange-1)/2 and zRange-1 >= pos[2] >= 0:
+        return 1 / (dist(sourcePos, pos)+0.00001)
+    else:
+        return -1
+
 
 # Set the environment here
-def drawEnv( sourcePos = (-40, 0, 0), step = 5):
+def drawEnv( sourcePos = (-20, 0, 20), step = 5):
     # Set the environmen(density)
     for i in range(-int((xRange-1)/2), int((xRange-1)/2)):
         for j in range(-int((yRange-1)/2), int((yRange-1)/2)):
@@ -51,12 +58,12 @@ def sigmoid(x, alpha = -4):
     return 1.0 / (1.0+exp(-alpha*x)) if x < 10 else 0
 
 
-maxIter = 1000
+maxIter = 1500
 time = range(maxIter)
 lSensorRec, rSensorRec, hSensorRec, lowSensorRec, distance = range(maxIter),range(maxIter),range(maxIter),range(maxIter),range(maxIter)
 
 # Implement your strategy for vehicle here
-def loopVehicle( sourcePos = (-20, 0, 20), initPos = (40, 40, 0), theta = 3/2*pi, phi = 0, delta = 0.5, alpha = -4, W = 4, maxI = maxIter):
+def loopVehicle( sourcePos = (-20, 0, 20), initPos = (40, 40, 0), theta = 3/2*pi, phi = 0, delta = 0.5, alpha = -4, W = 5, maxI = maxIter):
     """ Init & loop vehicle.
     """
     
@@ -69,15 +76,15 @@ def loopVehicle( sourcePos = (-20, 0, 20), initPos = (40, 40, 0), theta = 3/2*pi
     ii = 0
 
     while ii < maxI:
-        #vs.rate(3000)
+        #vs.rate(1000)
 
-        orthV = makeHoriVector(theta+pi/2)
+        orthV = makeVector(theta+pi/2, phi)
         orthV2 = makeVector(theta, phi+pi/2)
-        lSensorPos = tuple(int(x) for x in (vPos+orthV*W/2).astuple())
-        rSensorPos = tuple(int(x) for x in (vPos-orthV*W/2).astuple())
+        lSensorPos = tuple((x) for x in (vPos+orthV*W/2).astuple())
+        rSensorPos = tuple((x) for x in (vPos-orthV*W/2).astuple())
 
-        hSensorPos = tuple(int(x) for x in (vPos+orthV2*W/2).astuple())
-        lowSensorPos = tuple(int(x) for x in (vPos-orthV2*W/2).astuple())
+        hSensorPos = tuple((x) for x in (vPos+orthV2*W/2).astuple())
+        lowSensorPos = tuple((x) for x in (vPos-orthV2*W/2).astuple())
         #print(rSensorPos)
 
         if (getDensity(lSensorPos) == -1 or getDensity(rSensorPos) == -1 or
@@ -106,8 +113,10 @@ def loopVehicle( sourcePos = (-20, 0, 20), initPos = (40, 40, 0), theta = 3/2*pi
         ii += 1
 
 stride = 10
-time = time[::stride]
-
+
+time = time[::stride]
+
+
 step = 1
 alphaRate = 0
 

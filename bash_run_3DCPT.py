@@ -138,23 +138,23 @@ print time, distense
 pylab.figure(1)
 plot1 = [pylab.plot(alphaList, time[i], 's-', label='Step is '+str(stepList[i])) for i in range(len(stepList))]
 pylab.legend(loc=1)
-pylab.title('T: Time to get within reasonable distance to source')
 pylab.xlabel(r'$\alpha$')
-pylab.ylabel('T')
+pylab.ylabel('T / iterations')
+pylab.title('T: measures efficiency in CPT')
 pylab.grid()
 
-pylab.savefig('./figure/time1.png', bbox_inches='tight')
+pylab.savefig('./figure/3d_time1.png', bbox_inches='tight')
 
 
 pylab.figure(2)
 plot2 = [pylab.plot(alphaList, distense[i], 's-', label='Step is '+str(stepList[i])) for i in range(len(stepList))]
 pylab.legend(loc=2)
-pylab.title('D: Average distance to source after first locating')
 pylab.xlabel(r'$\alpha$')
-pylab.ylabel('D')
+pylab.ylabel('D / m')
+pylab.title('D: measures Passing-By problem in CPT')
 pylab.grid()
 
-pylab.savefig('./figure/distanse1.png', bbox_inches='tight')
+pylab.savefig('./figure/3d_distanse1.png', bbox_inches='tight')
 
 
 fig = pylab.figure(3)
@@ -163,14 +163,14 @@ ax = fig.add_subplot(111, projection='3d')
 X, Y = np.meshgrid(alphaList, stepList)
 surf=ax.plot_surface(X, Y, time, rstride=1, cstride=1, cmap=cm.coolwarm,
         linewidth=0, antialiased=False)
-ax.set_xlabel('Step')
-ax.set_ylabel(r'$\alpha$')
-ax.set_zlabel('T')
-pylab.title('T: Time to get within reasonable distance to source')
+ax.set_xlabel(r'$\alpha$')
+ax.set_ylabel('Step')
+ax.set_zlabel('T / iterations')
+pylab.title('T: measures efficiency in CPT')
 fig.colorbar(surf)
 ax.grid()
 
-pylab.savefig('./figure/time2.png', bbox_inches='tight')
+pylab.savefig('./figure/3d_time2.png', bbox_inches='tight')
 
 
 fig = pylab.figure(4)
@@ -179,14 +179,14 @@ ax = fig.add_subplot(111, projection='3d')
 X, Y = np.meshgrid(alphaList, stepList)
 surf=ax.plot_surface(X, Y, distense, rstride=1, cstride=1, cmap=cm.coolwarm,
         linewidth=0, antialiased=False)
-ax.set_xlabel('Step')
-ax.set_ylabel(r'$\alpha$')
-ax.set_zlabel('D')
-pylab.title('D: Average distance to source after first locating')
+ax.set_xlabel(r'$\alpha$')
+ax.set_ylabel('Step')
+ax.set_zlabel('D / m')
+pylab.title('D: measures Passing-By problem in CPT')
 fig.colorbar(surf)
 ax.grid()
 
-pylab.savefig('./figure/distanse2.png', bbox_inches='tight')
+pylab.savefig('./figure/3d_distanse2.png', bbox_inches='tight')
 
 
 pylab.show()

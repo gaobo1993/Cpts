@@ -97,8 +97,10 @@ def loopVehicle( sourcePos = (-20, 0, 20), initPos = (40, 40, 0), theta = 3/2*pi
         ii += 1
 
 stride = 10
-time = time[::stride]
-
+
+time = time[::stride]
+
+
 step = 1
 alphaRate = 0
 

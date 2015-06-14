@@ -1,26 +1,25 @@
 import numpy as np
 import pylab as pl
- 
-x1 = [1, 2, 3, 4, 5]# Make x, y arrays for each graph
-y1 = [1, 4, 9, 16, 25]
-x2 = [1, 2, 4, 6, 8]
-y2 = [2, 4, 8, 12, 16]
- 
-plot1, = pl.plot(x1, y1, 'r')# use pylab to plot x and y : Give your plots names
-plot2, = pl.plot(x2, y2, 'go')
- 
-pl.title('Plot of y vs. x')# give plot a title
-pl.xlabel('x axis')# make axis labels
-pl.ylabel('y axis')
- 
- 
-pl.xlim(0.0, 9.0)# set axis limits
-pl.ylim(0.0, 30.)
- 
- 
-pl.legend([plot1], ['red line'], 'best', numpoints=1)# make legend
-pl.legend([plot2], ['green circles'], 'best', numpoints=1)# make legend
-pl.show()# show the plot on the screen
+from math import *
 
-for i in range(5):
-    print i
+ 
+def sigmoid(x, alpha=1):
+    return [ 1.0/(1+exp(-x[i]*alpha)) for i in range(len(x)) ]
+
+d = np.linspace(-10.0, 10.0, num=100)
+
+alphaList = [0, -0.5, -1, -2, -3, -4, -5, -8]
+
+pl.figure()
+plot2 = [pl.plot(d, sigmoid(d, alphaList[i]), label=r'$\alpha$ is '+str(alphaList[i])) for i in range(len(alphaList))]
+pl.legend(loc=1)
+pl.title('Sigmoid')
+pl.xlabel('d')
+pl.ylabel('y')
+pl.xlim(-10.0, 10.0)# set axis limits
+pl.ylim(-0.2, 1.2)
+pl.grid()
+
+pl.savefig('./figure/sigmoid.png', bbox_inches='tight')
+pl.show()
+

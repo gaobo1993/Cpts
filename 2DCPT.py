@@ -1,3 +1,4 @@
+
 from __future__ import division, print_function
 import visual as vs   # for 3D panel 
 import wx   # for widgets
@@ -79,7 +80,7 @@ def getDensity(pos):
 
 
 # Set the environment here
-def drawEnv( sourcePos = (-40, 0, 0), step = 5 ):
+def drawEnv( sourcePos = (-40, 0, 0), step = 2 ):
     # Set the environmen(density)
     for i in range(-int((xRange-1)/2), int((xRange-1)/2)):
         for j in range(-int((yRange-1)/2), int((yRange-1)/2)):
@@ -110,11 +111,11 @@ def makeVector(theta, phi):
 
 
 def sigmoid(x, alpha = -4):
-    return 1.0 / (1.0+exp(-alpha*x)) if -alpha*x < 10 else 0
+    return 1.0 / (1.0+exp(-alpha*x)) if -alpha*x < 5 else 0
 
 
 # Implement your strategy for vehicle here
-def loopVehicle( initPos = (40, 40, 0), theta = 3/2*pi, phi = 0, delta = 0.5, W = 4 ):
+def loopVehicle( initPos = (40, 40, 0), theta = 3/2*pi, phi = 0, delta = 0.5, W = 4, alpha = 0):
     """ Init & loop vehicle.
     """
     
@@ -145,7 +146,7 @@ def loopVehicle( initPos = (40, 40, 0), theta = 3/2*pi, phi = 0, delta = 0.5, W 
 
         vehicle.velocity = makeVector(theta, phi)
     
-        vehicle.pos = vehicle.pos+vehicle.velocity*deltat*sigmoid(getDensity(lSensorPos)+getDensity(rSensorPos), -10)
+        vehicle.pos = vehicle.pos+vehicle.velocity*deltat*sigmoid(getDensity(lSensorPos)+getDensity(rSensorPos), alpha)
         vehicle.axis = vehicle.velocity
         vehicle.size=(W,W,0.2)
 
@@ -155,4 +156,4 @@ def loopVehicle( initPos = (40, 40, 0), theta = 3/2*pi, phi = 0, delta = 0.5, W 
         
 
 drawEnv(sourcePos = (-40, 0, 0))
-loopVehicle(theta = random.randint(1,4)/2*pi, initPos = (20, 20, 0))
+loopVehicle(theta = 1/2*pi, initPos = (20, 20, 0), alpha = -5, delta = 1)
