@@ -51,12 +51,8 @@ def sigmoid(x, alpha = -4):
     return 1.0 / (1.0+exp(-alpha*x)) if x < 10 else 0
 
 
-maxIter = 1000
-time = range(maxIter)
-lSensorRec, rSensorRec, distance = range(maxIter),range(maxIter),range(maxIter)
-
 # Implement your strategy for vehicle here
-def loopVehicle( sourcePos = (-20, 0, 20), initPos = (40, 40, 0), theta = 3/2*pi, phi = 0, delta = 0.5, alpha = -4, W = 4, maxI = maxIter):
+def loopVehicle( vsrcPos = vs.vector(-20, 0, 30), initPos = (40, 40, 0), theta = 3/2*pi, phi = 0, delta = 0.5, W = 4, alpha = -4, thre_den = 0.4 ):
     """ Init & loop vehicle.
     """
     
@@ -66,9 +62,12 @@ def loopVehicle( sourcePos = (-20, 0, 20), initPos = (40, 40, 0), theta = 3/2*pi
     deltat = delta
     vscale = 8
 
-    ii = 0
+    time = 0
+    sampleTime = 500
+    sampleN = 0
+    distance = 0
 
-    while ii < maxIter:
+    while True:
         #vs.rate(3000)
 
         orthV = makeHoriVector(theta+pi/2)
@@ -88,69 +87,55 @@ def loopVehicle( sourcePos = (-20, 0, 20), initPos = (40, 40, 0), theta = 3/2*pi
         elif getDensity(lSensorPos) < getDensity(rSensorPos):
             theta = theta - pi/180
 
-        vVelocity = makeVector(theta, phi)    
+        vVelocity = makeVector(theta, phi)
         vPos = vPos+vVelocity*deltat*sigmoid(getDensity(lSensorPos)+getDensity(rSensorPos), alpha)
         vAxis = vVelocity
-        
-        lSensorRec[ii], rSensorRec[ii], distance[ii] \
-                        = getDensity(lSensorPos), getDensity(rSensorPos), dist(sourcePos, vPos.astuple())
-        ii += 1
 
-stride = 10
+        if (getDensity(lSensorPos)+getDensity(rSensorPos))/2 <= thre_den:
+            time = time + 1
+        else:
+            distance = distance+vs.mag(vsrcPos-vPos)
+            return (time, distance)
+        if time >= sampleTime:
+            return (time, distance)
 
-time = time[::stride]
-
-
-step = 1
-alphaRate = 0
 
 drawEnv(sourcePos = (-20, 0, 0))
-loopVehicle(theta = 1/2*pi, initPos = (20, 20, 0), sourcePos = (-20, 0, 0), alpha = alphaRate, delta = step)
+
+thre_den = [0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6]
+
+time = [0 for i in range(len(thre_den))]
+
+distance = [0 for i in range(len(thre_den))]
+
+for k in range(len(thre_den)):
+    for i in range(1, 4):
+        temp = loopVehicle(vsrcPos = vs.vector(-20, 0, 0), theta = i/2*pi, initPos = (20, 20, 0), alpha = 0, delta = 1, thre_den = thre_den[k])
+        time[k] = time[k]+temp[0]
+        distance[k] = distance[k]+temp[1]
+            
+time = [x/4 for x in time]
+distance = [x/4 for x in distance]
 
 
-pylab.figure(1)
-plotl, = pylab.plot(time, lSensorRec[::stride], '-', label='Left Sensor')
-plotr, = pylab.plot(time, rSensorRec[::stride], '--r', label='Right Sensor')
-pylab.legend(loc=1)
-pylab.title('Step is '+str(step)+r',$\alpha$ is '+str(alphaRate))
-pylab.xlabel('Time')
-pylab.ylabel('Density of Sensors')
-pylab.grid()
-pylab.savefig('./figure/2D_eg_lr_sensor.png', bbox_inches='tight')
+fig1 = plt.figure(1)
+ax1 = fig1.add_subplot(111)
+plotl = ax1.plot(thre_den, time, '-b', label='Time')
+ax1.set_xlabel('Threshold of source declaration')
+ax1.set_ylabel('Time', color='b')
+ax1.set_ylim(115, 120)
+for tl in ax1.get_yticklabels():
+    tl.set_color('b')
+ax1.legend(loc=1)
 
-pylab.figure(2)
-plotd,  = pylab.plot(time, distance[::stride], '-b', label='Distanse')
-pylab.legend(loc=1)
-pylab.title('Step is '+str(step)+r',$\alpha$ is '+str(alphaRate))
-pylab.xlabel('Time')
-pylab.ylabel('Distance from source')
-pylab.grid()
-pylab.savefig('./figure/2D_eg_lh_dist.png', bbox_inches='tight')
+ax2 = ax1.twinx()
+plotr, = ax2.plot(thre_den, distance, '--ro', label='distance')
+ax2.set_ylabel('distance', color='r')
+for tl in ax2.get_yticklabels():
+    tl.set_color('r')
+ax2.legend(loc = 2)
+plt.grid()
+plt.savefig('./ROBIO/2d_t_d.png', bbox_inches='tight')
 
-
-step = 1
-alphaRate = -5
-loopVehicle(theta = 1/2*pi, initPos = (20, 20, 0), sourcePos = (-20, 0, 0), alpha = alphaRate, delta = step)
-
-pylab.figure(3)
-plotl, = pylab.plot(time, lSensorRec[::stride], '-', label='Left Sensor')
-plotr, = pylab.plot(time, rSensorRec[::stride], '--r', label='Right Sensor')
-pylab.legend(loc=1)
-pylab.title('Step is '+str(step)+r',$\alpha$ is '+str(alphaRate))
-pylab.xlabel('Time')
-pylab.ylabel('Density of Sensors')
-pylab.grid()
-pylab.savefig('./figure/2D_eg_lr_sensor2.png', bbox_inches='tight')
-
-pylab.figure(4)
-plotd,  = pylab.plot(time, distance[::stride], '-b', label='Distanse')
-pylab.legend(loc=1)
-pylab.title('Step is '+str(step)+r',$\alpha$ is '+str(alphaRate))
-pylab.xlabel('Time')
-pylab.ylabel('Distance from source')
-pylab.grid()
-pylab.savefig('./figure/2D_eg_lh_dist2.png', bbox_inches='tight')
-
-
-pylab.show()
+plt.show()
 

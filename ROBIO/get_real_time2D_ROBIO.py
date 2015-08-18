@@ -52,6 +52,9 @@ def sigmoid(x, alpha = -4):
 
 
 maxIter = 1000
+
+maxIterResult = 1000
+thre_den = 0.4
 time = range(maxIter)
 lSensorRec, rSensorRec, distance = range(maxIter),range(maxIter),range(maxIter)
 
@@ -94,62 +97,66 @@ def loopVehicle( sourcePos = (-20, 0, 20), initPos = (40, 40, 0), theta = 3/2*pi
         
         lSensorRec[ii], rSensorRec[ii], distance[ii] \
                         = getDensity(lSensorPos), getDensity(rSensorPos), dist(sourcePos, vPos.astuple())
+        if (lSensorRec[ii] + rSensorRec[ii])/2 > thre_den:
+            return ii+1
         ii += 1
 
-stride = 10
-
-time = time[::stride]
+stride = 20
 
 
 step = 1
 alphaRate = 0
 
-drawEnv(sourcePos = (-20, 0, 0))
-loopVehicle(theta = 1/2*pi, initPos = (20, 20, 0), sourcePos = (-20, 0, 0), alpha = alphaRate, delta = step)
+drawEnv(sourcePos = (-40, 0, 0))
+maxIterResult = loopVehicle(theta = 1/2*pi, initPos = (20, 30, 0), sourcePos = (-40, 0, 0), alpha = alphaRate, delta = step)
 
+print lSensorRec[maxIterResult-1], rSensorRec[maxIterResult-1]
+
+time = time[0:maxIterResult:stride]
 
 pylab.figure(1)
-plotl, = pylab.plot(time, lSensorRec[::stride], '-', label='Left Sensor')
-plotr, = pylab.plot(time, rSensorRec[::stride], '--r', label='Right Sensor')
-pylab.legend(loc=1)
+plotl, = pylab.plot(time, lSensorRec[0:maxIterResult:stride], '-', label='Left Sensor')
+plotr, = pylab.plot(time, rSensorRec[0:maxIterResult:stride], 'o--r', label='Right Sensor')
+pylab.legend(loc=2)
 pylab.title('Step is '+str(step)+r',$\alpha$ is '+str(alphaRate))
 pylab.xlabel('Time')
 pylab.ylabel('Density of Sensors')
 pylab.grid()
-pylab.savefig('./figure/2D_eg_lr_sensor.png', bbox_inches='tight')
+pylab.savefig('./ROBIO/2D_eg_lr_sensor.png', bbox_inches='tight')
 
+newdist = distance[0:maxIterResult:stride]
 pylab.figure(2)
-plotd,  = pylab.plot(time, distance[::stride], '-b', label='Distanse')
+plotd,  = pylab.plot(time, newdist, '-b', label='Distanse')
 pylab.legend(loc=1)
 pylab.title('Step is '+str(step)+r',$\alpha$ is '+str(alphaRate))
 pylab.xlabel('Time')
 pylab.ylabel('Distance from source')
 pylab.grid()
-pylab.savefig('./figure/2D_eg_lh_dist.png', bbox_inches='tight')
+pylab.savefig('./ROBIO/2D_eg_lh_dist.png', bbox_inches='tight')
 
 
-step = 1
-alphaRate = -5
-loopVehicle(theta = 1/2*pi, initPos = (20, 20, 0), sourcePos = (-20, 0, 0), alpha = alphaRate, delta = step)
-
-pylab.figure(3)
-plotl, = pylab.plot(time, lSensorRec[::stride], '-', label='Left Sensor')
-plotr, = pylab.plot(time, rSensorRec[::stride], '--r', label='Right Sensor')
-pylab.legend(loc=1)
-pylab.title('Step is '+str(step)+r',$\alpha$ is '+str(alphaRate))
-pylab.xlabel('Time')
-pylab.ylabel('Density of Sensors')
-pylab.grid()
-pylab.savefig('./figure/2D_eg_lr_sensor2.png', bbox_inches='tight')
-
-pylab.figure(4)
-plotd,  = pylab.plot(time, distance[::stride], '-b', label='Distanse')
-pylab.legend(loc=1)
-pylab.title('Step is '+str(step)+r',$\alpha$ is '+str(alphaRate))
-pylab.xlabel('Time')
-pylab.ylabel('Distance from source')
-pylab.grid()
-pylab.savefig('./figure/2D_eg_lh_dist2.png', bbox_inches='tight')
+##step = 1
+##alphaRate = -5
+##loopVehicle(theta = 1/2*pi, initPos = (20, 20, 0), sourcePos = (-20, 0, 0), alpha = alphaRate, delta = step)
+##
+##pylab.figure(3)
+##plotl, = pylab.plot(time, lSensorRec[::stride], '-', label='Left Sensor')
+##plotr, = pylab.plot(time, rSensorRec[::stride], '--r', label='Right Sensor')
+##pylab.legend(loc=1)
+##pylab.title('Step is '+str(step)+r',$\alpha$ is '+str(alphaRate))
+##pylab.xlabel('Time')
+##pylab.ylabel('Density of Sensors')
+##pylab.grid()
+##pylab.savefig('./ROBIO/2D_eg_lr_sensor2.png', bbox_inches='tight')
+##
+##pylab.figure(4)
+##plotd,  = pylab.plot(time, distance[::stride], '-b', label='Distanse')
+##pylab.legend(loc=1)
+##pylab.title('Step is '+str(step)+r',$\alpha$ is '+str(alphaRate))
+##pylab.xlabel('Time')
+##pylab.ylabel('Distance from source')
+##pylab.grid()
+##pylab.savefig('./ROBIO/2D_eg_lh_dist2.png', bbox_inches='tight')
 
 
 pylab.show()

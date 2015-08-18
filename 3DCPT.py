@@ -63,9 +63,9 @@ drawGrid( normal = 'y', posn= (-60, -60, 0), colour = clr.blue,   W = 12, H = 6 
 #drawGrid( normal = 'z', posn= (-60, 0,  60), colour = clr.blue,   W = 5 )
 #drawGrid( normal = 'z', posn= ( 10, 0,  60), colour = clr.blue,   W = 5 )
 #drawGrid( normal = 'y', posn = (-60, 60, 0), colour = clr.blue, W = 12 )
-drawGrid( normal = 'x', posn= (-60, -60, 0), colour = clr.green,  H = 12, W = 6 )
+drawGrid( normal = 'x', posn= (-60, -60, 0), colour = clr.blue,  H = 12, W = 6 )
 #drawGrid( normal = 'x', posn= ( 60, -60, 0), colour = clr.green,  H = 12, W = 6 )
-drawGrid( normal = 'z', posn= (-60, -60, 0), colour = clr.orange, W = 12, H = 12 )
+drawGrid( normal = 'z', posn= (-60, -60, 0), colour = clr.blue, W = 12, H = 12 )
 #drawGrid( normal = 'z', posn= (-60, 0,  0), colour = clr.red,    W = 12 )
 
 
@@ -118,7 +118,7 @@ def makeVector(theta, phi):
 def sigmoid(x, alpha = -4):
     return 1.0 / (1.0+exp(-alpha*x)) if x < 10 else 0
 
-
+thre_den = 0.3
 # Implement your strategy for vehicle here
 def loopVehicle( initPos = (40, 40, 0), theta = 3/2*pi, phi = 0, delta = 0.5, alpha = -4, W = 4, maxIter = 2000):
     """ Init & loop vehicle.
@@ -144,6 +144,9 @@ def loopVehicle( initPos = (40, 40, 0), theta = 3/2*pi, phi = 0, delta = 0.5, al
 
         hSensorPos = tuple(int(x) for x in (vehicle.pos+orthV2*W/2).astuple())
         lowSensorPos = tuple(int(x) for x in (vehicle.pos-orthV2*W/2).astuple())
+        if (getDensity(lSensorPos)+getDensity(rSensorPos)\
+            +getDensity(hSensorPos)+getDensity(lowSensorPos)) / 4 > thre_den:
+            return
         #print(rSensorPos)
 
         if (getDensity(lSensorPos) == -1 or getDensity(rSensorPos) == -1 or
@@ -180,5 +183,5 @@ def loopVehicle( initPos = (40, 40, 0), theta = 3/2*pi, phi = 0, delta = 0.5, al
         
 
 
-drawEnv(sourcePos = (-20, 0, 20))
-loopVehicle(theta = 2/2*pi, initPos = (20, 20, 30), alpha = 0, delta = 1)
+drawEnv(sourcePos = (-20, -30, 10))
+loopVehicle(theta = 0/2*pi, initPos = (20, 20, 30), alpha = 0, delta = 1)

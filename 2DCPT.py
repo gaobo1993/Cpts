@@ -57,9 +57,9 @@ drawGrid( normal = 'y', posn= (-60, -60, 0), colour = clr.blue,   W = 12, H = 6 
 #drawGrid( normal = 'z', posn= (-60, 0,  60), colour = clr.blue,   W = 5 )
 #drawGrid( normal = 'z', posn= ( 10, 0,  60), colour = clr.blue,   W = 5 )
 #drawGrid( normal = 'y', posn = (-60, 60, 0), colour = clr.blue, W = 12 )
-drawGrid( normal = 'x', posn= (-60, -60, 0), colour = clr.green,  H = 12, W = 6 )
+drawGrid( normal = 'x', posn= (-60, -60, 0), colour = clr.blue,  H = 12, W = 6 )
 #drawGrid( normal = 'x', posn= ( 60, -60, 0), colour = clr.green,  H = 12, W = 6 )
-drawGrid( normal = 'z', posn= (-60, -60, 0), colour = clr.orange, W = 12, H = 12 )
+drawGrid( normal = 'z', posn= (-60, -60, 0), colour = clr.blue, W = 12, H = 12 )
 #drawGrid( normal = 'z', posn= (-60, 0,  0), colour = clr.red,    W = 12 )
 
 
@@ -113,6 +113,7 @@ def makeVector(theta, phi):
 def sigmoid(x, alpha = -4):
     return 1.0 / (1.0+exp(-alpha*x)) if -alpha*x < 5 else 0
 
+thre_den = 0.4
 
 # Implement your strategy for vehicle here
 def loopVehicle( initPos = (40, 40, 0), theta = 3/2*pi, phi = 0, delta = 0.5, W = 4, alpha = 0):
@@ -128,8 +129,6 @@ def loopVehicle( initPos = (40, 40, 0), theta = 3/2*pi, phi = 0, delta = 0.5, W 
     vscale = 8
     varr = vs.arrow(pos=vehicle.pos, axis=vscale*vehicle.velocity, color=clr.yellow)
 
-    
-
     while True:
         vs.rate(1000)
 
@@ -144,6 +143,9 @@ def loopVehicle( initPos = (40, 40, 0), theta = 3/2*pi, phi = 0, delta = 0.5, W 
         elif getDensity(lSensorPos) < getDensity(rSensorPos):
             theta = theta - pi/180
 
+        if (getDensity(lSensorPos) + getDensity(rSensorPos))/2 > thre_den:
+            return
+
         vehicle.velocity = makeVector(theta, phi)
     
         vehicle.pos = vehicle.pos+vehicle.velocity*deltat*sigmoid(getDensity(lSensorPos)+getDensity(rSensorPos), alpha)
@@ -156,4 +158,4 @@ def loopVehicle( initPos = (40, 40, 0), theta = 3/2*pi, phi = 0, delta = 0.5, W 
         
 
 drawEnv(sourcePos = (-40, 0, 0))
-loopVehicle(theta = 1/2*pi, initPos = (20, 20, 0), alpha = -5, delta = 1)
+loopVehicle(theta = 1/2*pi, initPos = (20, 30, 0), alpha = 0, delta = 1)
